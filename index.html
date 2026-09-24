@@ -1,0 +1,1398 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no"><meta name="theme-color" content="#ffffff"><title>KM & Fuel Tracker — Rider KM Tracker</title><script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script><script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script><script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script><style>
+:root{--bg:#f5f6f8;--surface:#fff;--surface2:#f0f1f4;--text:#17181c;--muted:#737780;--line:#e4e5e9;--primary:#d99122;--primary2:#b9720d;--green:#35a66f;--red:#d95762;--dark:#202126;--shadow:0 2px 10px rgba(20,20,30,.06);font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}html{background:#111}body{margin:0;background:var(--bg);color:var(--text);overflow-x:hidden}button,input,select{font:inherit}button{border:0}.hidden{display:none!important}
+#bootLoading{min-height:100dvh;display:grid;place-items:center;background:var(--bg)}.boot-card{text-align:center}.boot-logo{width:56px;height:56px;border-radius:18px;background:var(--dark);color:#fff;display:grid;place-items:center;font-size:26px;font-weight:800;margin:0 auto 12px}.boot-card span{font-size:12px;color:var(--muted)}
+#appRoot{min-height:100dvh}.app-shell{max-width:520px;margin:auto;min-height:100dvh;background:var(--bg);position:relative}.topbar{height:68px;position:sticky;top:0;z-index:40;background:rgba(255,255,255,.95);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);display:flex;align-items:center;justify-content:space-between;padding:0 16px}.brand-wrap{display:flex;align-items:center;gap:10px}.brand-icon{width:40px;height:40px;border-radius:13px;background:var(--dark);color:#fff;display:grid;place-items:center;font-weight:900}.brand-name{font-size:19px;font-weight:800}.brand-sub{font-size:10px;color:var(--muted)}.top-action{width:40px;height:40px;border-radius:13px;background:var(--surface2);font-size:23px;cursor:pointer}
+.app-content{padding:16px 14px 100px}.app-screen{display:none}.app-screen.active{display:block}.section-title{font-size:18px;font-weight:800;margin:0 2px 11px}.section-row{display:flex;justify-content:space-between;align-items:center;margin-bottom:11px}.link-btn{background:none;color:var(--primary2);font-size:12px;font-weight:800;cursor:pointer}
+.hero{background:var(--dark);color:#fff;border-radius:24px;padding:20px;margin-bottom:14px;box-shadow:0 8px 24px rgba(0,0,0,.12)}.hero-row{display:flex;justify-content:space-between;align-items:end;gap:12px}.hero-label{font-size:10px;text-transform:uppercase;letter-spacing:.12em;color:#aaacb3}.hero-value{font-size:33px;font-weight:850;margin:6px 0}.hero-sub{font-size:11px;color:#b8bac0}.hero-pill{background:#ffffff14;border-radius:13px;padding:9px;text-align:right}.hero-pill b{display:block;font-size:14px}.hero-pill span{font-size:8px;color:#bbb}.stats-grid,.quick-grid,.report-grid,.more-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}.stats-grid{margin-bottom:20px}.stat-card,.quick-btn,.report-card,.more-card,.form-card,.list-card{background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow)}.stat-card{padding:14px;min-height:80px}.stat-label{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;font-weight:750}.stat-value{font-size:19px;font-weight:800;margin-top:7px}.green{color:var(--green)!important}.red{color:var(--red)!important}.amber{color:var(--primary2)!important}
+.quick-grid{margin-bottom:21px}.quick-btn,.report-card,.more-card{text-align:left;padding:15px;cursor:pointer}.quick-icon,.tile-icon{width:34px;height:34px;border-radius:10px;background:#fff4df;color:var(--primary2);display:grid;place-items:center;font-weight:900;margin-bottom:9px}.quick-btn strong,.report-card strong,.more-card strong{display:block;font-size:13px}.quick-btn span,.report-card span,.more-card span{display:block;font-size:10px;color:var(--muted);margin-top:3px;line-height:1.35}.recent-list{display:flex;flex-direction:column;gap:8px}.recent-item{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:12px 14px;display:flex;justify-content:space-between;align-items:center}.recent-title{font-size:13px;font-weight:750}.recent-meta{font-size:10px;color:var(--muted);margin-top:3px}.recent-right{text-align:right}.recent-right strong{font-size:13px;display:block}.mini-status{font-size:8px;font-weight:800;text-transform:uppercase}.mini-status.paid{color:var(--green)}.mini-status.partial{color:var(--primary2)}.mini-status.unpaid{color:var(--red)}.empty-state{padding:28px 16px;background:var(--surface);border:1px dashed #d5d7dc;border-radius:18px;text-align:center;color:var(--muted)}.empty-icon{font-size:24px;color:var(--primary2)}.empty-state strong{display:block;color:var(--text);font-size:14px}.empty-state span{font-size:10px}
+.form-card,.list-card{padding:17px;margin-bottom:14px}.form-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:15px}.form-head h2{font-size:20px;margin:0}.edit-tag{font-size:8px;color:var(--muted);background:var(--surface2);padding:7px 9px;border-radius:9px;text-transform:uppercase;letter-spacing:.07em}.field{margin-bottom:13px}.field label{display:block;font-size:9px;color:#70737b;font-weight:800;text-transform:uppercase;letter-spacing:.08em;margin:0 0 6px 2px}.field input,.field select{width:100%;height:49px;border:1px solid #dedfe4;border-radius:14px;background:#fafbfc;padding:0 13px;outline:0;color:var(--text);font-size:14px}.field input:focus,.field select:focus{border-color:#d59a46;box-shadow:0 0 0 3px #d9912217}.form-grid,.filter-more,.row2{display:grid;grid-template-columns:1fr 1fr;gap:9px}.preview-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:6px 0 14px}.preview-card{background:var(--dark);color:#fff;border-radius:13px;padding:11px}.preview-label{font-size:8px;color:#aaa;text-transform:uppercase}.preview-value{font-size:15px;font-weight:800;margin-top:5px}.form-actions{display:grid;grid-template-columns:1fr auto;gap:8px}.btn,.btn-outline,.btn-amber,.btn-red{height:47px;border-radius:14px;padding:0 15px;font-weight:750;cursor:pointer}.btn,.btn-amber{background:var(--primary);color:#fff}.btn-outline{background:#fff;border:1px solid var(--line);color:var(--text)}.btn-red{background:#fbe8eb;color:#c33e4a}.btn-sm{height:40px;border-radius:11px;padding:0 12px;font-size:11px;font-weight:750;cursor:pointer}.btn-xs{height:31px;border-radius:9px;padding:0 9px;font-size:10px}.btn-block{width:100%}.note-muted{font-size:10px;color:var(--muted);line-height:1.5}.search-row{display:grid;grid-template-columns:1fr auto;gap:8px} .list-table{width:100%;border-collapse:separate;border-spacing:0 9px}.list-table thead{display:none}.list-table tbody tr{display:grid;grid-template-columns:1fr 1fr;gap:0;background:#fafbfc;border:1px solid var(--line);border-radius:16px;padding:10px 12px;overflow:hidden}.list-table tbody td{display:flex;align-items:center;justify-content:space-between;min-width:0;padding:7px 3px;border-bottom:1px solid #e8e9ed;font-size:11px;white-space:normal}.list-table tbody td::before{content:'';font-size:8px;color:var(--muted);font-weight:800;text-transform:uppercase;letter-spacing:.05em;margin-right:8px}.list-table tbody td:nth-child(1)::before{content:'Date'}.list-table tbody td:nth-child(2)::before{content:'Rider'}.list-table tbody td:nth-child(3)::before{content:'KM'}.list-table tbody td:nth-child(4)::before{content:'Total'}.list-table tbody td:nth-child(5)::before{content:'Paid'}.list-table tbody td:nth-child(6)::before{content:'Pending'}.list-table tbody td:nth-child(7)::before{content:'Rider Pending'}.list-table tbody td:nth-child(8)::before{content:'Status'}.list-table tbody td:nth-child(9)::before{content:'Note'}.list-table tbody td:nth-child(10)::before{content:''}.list-table tbody td:nth-child(1),.list-table tbody td:nth-child(2),.list-table tbody td:nth-child(10){grid-column:1/-1}.list-table tbody td:nth-child(1){font-size:9px;color:var(--muted);border-bottom:0;padding-bottom:2px}.list-table tbody td:nth-child(2){font-size:13px;font-weight:800;padding-top:2px}.list-table tbody td:nth-child(9){grid-column:1/-1}.list-table tbody td:nth-child(10){border-bottom:0;padding-top:9px;justify-content:flex-start}.list-table tbody td.num{font-weight:750}.list-table .btn-row{display:flex!important;gap:7px}.badge{display:inline-flex;padding:5px 8px;border-radius:8px;font-size:8px;font-weight:800}.pending-heading{margin-top:22px}.pending-hint{font-size:9px;color:var(--muted);font-weight:700;text-transform:uppercase;letter-spacing:.06em}.rider-pending-list{display:flex;flex-direction:column;gap:8px;margin-bottom:16px}.rider-pending-item{display:flex;align-items:center;justify-content:space-between;background:var(--surface);border:1px solid var(--line);border-radius:15px;padding:12px 14px;box-shadow:var(--shadow)}.rider-pending-name{font-size:13px;font-weight:800}.rider-pending-sub{font-size:9px;color:var(--muted);margin-top:3px}.rider-pending-amount{text-align:right;font-size:14px;font-weight:850}.rider-pending-amount.pending{color:var(--red)}.rider-pending-amount.clear{color:var(--green)}.badge.paid{background:#e4f6ed;color:#218458}.badge.partial{background:#fff2dc;color:#a7680c}.badge.unpaid{background:#fbe8eb;color:#c33e4a}
+.bottom-nav{position:fixed;z-index:50;bottom:0;left:50%;transform:translateX(-50%);width:100%;max-width:520px;height:78px;background:#fffffff5;backdrop-filter:blur(18px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(4,1fr);padding:7px 8px calc(7px + env(safe-area-inset-bottom))}.bottom-nav button{background:none;color:#777a82;border-radius:15px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer}.bottom-nav button.active{background:#fff4df;color:var(--primary2)}.nav-icon{font-size:19px;line-height:20px}.nav-label{font-size:9px;font-weight:800}.fab{position:fixed;z-index:51;right:max(18px,calc((100vw - 520px)/2 + 18px));bottom:92px;width:55px;height:55px;border-radius:18px;background:var(--primary);color:#fff;font-size:28px;box-shadow:0 8px 20px #b873142e;cursor:pointer}
+.overlay{position:fixed;z-index:100;inset:0;background:#10111670;display:flex;align-items:flex-end;justify-content:center}.overlay-card{width:100%;max-width:520px;max-height:91dvh;overflow:auto;background:#fff;border-radius:24px 24px 0 0;padding:17px 16px calc(24px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px #0002}.overlay-card:before{content:"";display:block;width:38px;height:4px;border-radius:99px;background:#d8d9dd;margin:0 auto 16px}.card-head{display:flex;align-items:center;justify-content:space-between}.card-head h2{font-size:20px}.modal-close{width:36px;height:36px;border-radius:11px;background:var(--surface2);cursor:pointer}.row3{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-row{display:flex;gap:8px;flex-wrap:wrap}.tag{font-size:9px;padding:5px 8px;border-radius:8px;background:var(--surface2);color:var(--muted)}.tag.open{background:#e4f6ed;color:#218458}.tag.locked{background:#fbe8eb;color:#c33e4a}.lane{height:1px;background:var(--line);margin:14px 0}.table-scroll{overflow:auto}.list-card .table-scroll{overflow:visible}.list-card .table-scroll .list-table{min-width:0;width:100%;table-layout:fixed}.list-card .list-table tbody td{overflow-wrap:anywhere;word-break:break-word}.table-scroll th,.table-scroll td{font-size:10px;padding:8px;border-bottom:1px solid var(--line);white-space:nowrap;text-align:left}.table-scroll th{font-size:8px;color:var(--muted);text-transform:uppercase}.odometer-row{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}.odo{background:var(--dark);color:#fff;border-radius:11px;padding:9px}.odo .lbl{font-size:7px;color:#aaa}.odo .val{font-size:13px;font-weight:800;margin-top:4px}.drawer{display:none}
+@media(min-width:700px){.app-shell{box-shadow:0 0 35px #0002;min-height:100dvh}}
+</style></head><body><div id="bootLoading"><div class="boot-card"><div class="boot-logo">L</div><strong>KM & Fuel Tracker</strong><div><span>Starting app…</span></div></div></div><div id="appRoot" class="hidden"><div class="app-shell">
+<header class="topbar"><div class="brand-wrap"><div class="brand-icon">L</div><div><div class="brand-name">KM & Fuel Tracker</div><div class="brand-sub">Rider KM & Payout Tracker</div></div></div><button class="top-action" onclick="AppNav.more()" aria-label="More">⋮</button></header>
+<main class="app-content">
+<section class="app-screen active" data-screen="home"><div class="hero"><div class="hero-row"><div><div class="hero-label">Total Amount</div><div class="hero-value">৳<span id="statAmount">0.00</span></div><div class="hero-sub">All recorded ride payouts</div></div><div class="hero-pill"><b>৳<span id="statPending">0.00</span></b><span>Pending</span></div></div></div><div class="stats-grid"><div class="stat-card"><div class="stat-label">Total KM</div><div class="stat-value" id="statKm">0.00</div></div><div class="stat-card"><div class="stat-label">Total Paid</div><div class="stat-value green" id="statPaid">0.00</div></div><div class="stat-card"><div class="stat-label">This Month KM</div><div class="stat-value" id="statMonthKm">0.00</div></div><div class="stat-card"><div class="stat-label">This Month Amount</div><div class="stat-value amber" id="statMonthAmount">0.00</div></div></div><div class="section-title">Quick Actions</div><div class="quick-grid"><button class="quick-btn" onclick="AppNav.openAdd()"><div class="quick-icon">＋</div><strong>Add Ride</strong><span>Record a new entry</span></button><button class="quick-btn" onclick="AppNav.entries()"><div class="quick-icon">▤</div><strong>All Entries</strong><span>Search & manage rides</span></button></div><div class="section-row pending-heading"><div class="section-title">Rider Pending</div><span class="pending-hint">Current balance</span></div><div id="riderPendingList" class="rider-pending-list"></div></section>
+<section class="app-screen" data-screen="entries"><div class="form-card"><div class="form-head"><h2 id="entryTitle">Add Ride Entry</h2><span class="edit-tag">PIN protected</span></div><div class="field"><label for="entryDate">Date</label><input id="entryDate" type="date" onchange="Entries.preview()"></div><div class="field"><label for="entryRider">Rider</label><select id="entryRider" onchange="Entries.preview()"></select></div><div class="form-grid"><div class="field"><label for="entryKm">KM</label><input id="entryKm" type="number" min="0" step="0.01" placeholder="0.00" oninput="Entries.preview()"></div><div class="field"><label for="entryRate">Rate / KM</label><input id="entryRate" type="number" min="0" step="0.01" value="3.5" oninput="Entries.preview()"></div></div><div class="field"><label for="entryPaid">Paid Amount</label><input id="entryPaid" type="number" min="0" step="0.01" value="0" oninput="Entries.preview()"></div><div class="field"><label for="entryNote">Note</label><input id="entryNote" type="text" placeholder="Optional note"></div><div class="preview-grid"><div class="preview-card"><div class="preview-label">Total</div><div class="preview-value" id="prevTotal">0.00</div></div><div class="preview-card"><div class="preview-label">Pending</div><div class="preview-value red" id="prevPending">0.00</div></div><div class="preview-card"><div class="preview-label">Total Pending</div><div class="preview-value amber" id="prevTotalPending">0.00</div></div><div class="preview-card"><div class="preview-label">Status</div><div class="preview-value amber" id="prevStatus">Unpaid</div></div></div><div class="form-actions"><button class="btn btn-amber" id="entrySaveBtn" onclick="Entries.save()">Save Entry</button><button class="btn-outline" onclick="Entries.resetForm()">Reset</button></div><p class="note-muted">Total = KM × Rate · Pending = Total − Paid. Edit/delete requires the owner PIN.</p></div><div class="list-card"><div class="form-head"><h2>All Entries</h2><span class="edit-tag">History</span></div><div class="search-row"><div class="field" style="margin:0"><input id="fSearch" type="text" placeholder="Search rider or note…" oninput="Entries.render()"></div><button class="btn-outline btn-sm" onclick="Entries.clearFilters()">Clear</button></div><div class="filter-more"><div class="field" style="margin:0"><label for="fRider">Rider</label><select id="fRider" onchange="Entries.render()"></select></div><div class="field" style="margin:0"><label for="fStatus">Status</label><select id="fStatus" onchange="Entries.render()"><option value="">All</option><option value="paid">Paid</option><option value="partial">Partial</option><option value="unpaid">Unpaid</option></select></div></div><div class="field"><label for="fMonth">Month</label><input id="fMonth" type="month" onchange="Entries.render()"></div><div class="table-scroll"><table class="list-table"><thead><tr><th>Date</th><th>Rider</th><th>KM</th><th>Total</th><th>Paid</th><th>Pending</th><th>Total Pending</th><th>Status</th><th>Note</th><th></th></tr></thead><tbody id="entryRows"></tbody></table></div></div></section>
+<section class="app-screen" data-screen="reports"><div class="section-title">Reports</div><div class="report-grid"><button class="report-card" onclick="Menu.open('dailyModal')"><div class="tile-icon">D</div><strong>Daily Report</strong><span>Daily payout summary</span></button><button class="report-card" onclick="Menu.open('weeklyModal')"><div class="tile-icon">W</div><strong>Weekly Report</strong><span>This week's rider totals</span></button><button class="report-card" onclick="Menu.open('monthlyModal')"><div class="tile-icon">M</div><strong>Monthly Summary</strong><span>Monthly payout overview</span></button><button class="report-card" onclick="Reports.openRiderReport()"><div class="tile-icon">R</div><strong>Rider Report</strong><span>Detailed rider history</span></button></div></section>
+<section class="app-screen" data-screen="more"><div class="section-title">More</div><div class="more-grid"><button class="more-card" onclick="Menu.open('riderModal')"><div class="tile-icon">+</div><strong>Riders</strong><span>Add, rename or remove riders</span></button><button class="more-card" onclick="Menu.open('ownerModal')"><div class="tile-icon">⌘</div><strong>Owner PIN</strong><span>Manage protected actions</span></button><button class="more-card" onclick="Menu.open('backupModal')"><div class="tile-icon">↥</div><strong>Backup & Restore</strong><span>Export or restore your data</span></button><button class="more-card" onclick="Menu.open('auditModal')"><div class="tile-icon">✓</div><strong>Audit Log</strong><span>Review activity history</span></button><button class="more-card" onclick="Backup.exportJSON()"><div class="tile-icon">J</div><strong>Backup JSON</strong><span>Download a full backup</span></button><button class="more-card" onclick="Backup.exportCSV()"><div class="tile-icon">C</div><strong>Export CSV</strong><span>Export entry data</span></button></div></section>
+</main><button class="fab" onclick="AppNav.openAdd()" aria-label="Add ride">+</button><nav class="bottom-nav"><button class="active" data-screen="home" onclick="AppNav.home()"><span class="nav-icon">⌂</span><span class="nav-label">Home</span></button><button data-screen="entries" onclick="AppNav.entries()"><span class="nav-icon">▤</span><span class="nav-label">Entries</span></button><button data-screen="reports" onclick="AppNav.reports()"><span class="nav-icon">▥</span><span class="nav-label">Reports</span></button><button data-screen="more" onclick="AppNav.more()"><span class="nav-icon">☰</span><span class="nav-label">More</span></button></nav></div></div><div id="pinOverlay" class="overlay hidden">
+  <div class="overlay-card">
+    <h2 id="pinOverlayTitle">Owner PIN</h2>
+    <p class="note-muted" id="pinOverlayText">Enter the owner PIN to continue.</p>
+    <div class="field" style="margin-top:12px;">
+      <label for="pinInput">PIN</label>
+      <input id="pinInput" type="password" inputmode="numeric" placeholder="••••"
+             onkeydown="if(event.key==='Enter'){event.preventDefault();Overlay.submit();} if(event.key==='Escape')Overlay.close();" />
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-amber" style="flex:1" onclick="Overlay.submit()">Confirm</button>
+      <button class="btn-outline" style="flex:1" onclick="Overlay.close()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<div id="riderModal" class="overlay hidden">
+  <div class="overlay-card" style="max-width:640px;">
+    <div class="card-head" style="margin-bottom:16px;">
+      <h2>Riders</h2>
+      <button class="modal-close" onclick="Menu.close('riderModal')">✕</button>
+    </div>
+    <div class="field">
+      <label for="riderName">Add rider</label>
+      <input id="riderName" type="text" placeholder="Rider name" onkeydown="if(event.key==='Enter')Riders.add()" />
+    </div>
+    <button class="btn btn-block" onclick="Riders.add()">Add Rider</button>
+    <div class="table-scroll" style="margin-top:14px; max-height:min(60vh, 480px);">
+      <table><thead><tr><th>Name</th><th>Pending</th><th></th></tr></thead><tbody id="riderRows"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<div id="ownerModal" class="overlay hidden">
+  <div class="overlay-card" style="max-width:440px;">
+    <div class="card-head" style="margin-bottom:16px;">
+      <h2>Owner Panel</h2>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <span class="tag" id="sessionTag">Locked</span>
+        <button class="modal-close" onclick="Menu.close('ownerModal')">✕</button>
+      </div>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="newPin">New PIN</label><input id="newPin" type="password" placeholder="At least 4 digits" /></div>
+      <div class="field"><label for="confirmPin">Confirm PIN</label><input id="confirmPin" type="password" placeholder="Repeat PIN" /></div>
+    </div>
+    <div class="btn-row">
+      <button class="btn" onclick="PinSystem.change()">Save PIN</button>
+      <button class="btn-outline session-unlock-btn" onclick="PinSystem.unlock()">Unlock Session</button>
+      <button class="btn-outline session-lock-btn" onclick="PinSystem.lock()">Lock Session</button>
+    </div>
+    <div class="lane" style="margin:16px 0;"></div>
+    <button class="btn-red btn-block" onclick="DataStore.clearAll()">Delete All Data</button>
+    <p class="note-muted">Edit and delete stay behind the PIN. Unlock once to work freely, then lock again when you're done.</p>
+  </div>
+</div>
+
+<div id="dailyModal" class="overlay hidden">
+  <div class="overlay-card" style="max-width:600px;">
+    <div class="card-head" style="margin-bottom:14px;">
+      <h2>Daily Fuel Cost Report</h2>
+      <button class="modal-close" onclick="Menu.close('dailyModal')">✕</button>
+    </div>
+    <div class="row2">
+      <div class="field"><label for="reportDay">Date</label><input id="reportDay" type="date" onchange="Reports.render()" /></div>
+      <div class="field"><label for="dailyRiderSelect">Rider</label><select id="dailyRiderSelect" onchange="Reports.render()"><option value="">All Riders</option></select></div>
+    </div>
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn-sm btn-amber" onclick="Reports.exportDaily('csv')">CSV</button>
+      <button class="btn-sm btn-amber" onclick="Reports.exportDaily('pdf')">PDF</button>
+      <button class="btn-sm btn-amber" onclick="Reports.exportDaily('jpg')">JPG</button>
+    </div>
+    <div class="table-scroll" style="max-height:min(60vh, 460px);">
+      <table><thead><tr><th>Rider</th><th>KM</th><th>Total</th><th>Paid</th><th>Pending</th><th>Total Pending</th></tr></thead><tbody id="dailyRows"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<div id="weeklyModal" class="overlay hidden">
+  <div class="overlay-card" style="max-width:600px;">
+    <div class="card-head" style="margin-bottom:14px;">
+      <h2>This Week</h2>
+      <button class="modal-close" onclick="Menu.close('weeklyModal')">✕</button>
+    </div>
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn-sm btn-amber" onclick="Reports.exportWeekly('csv')">CSV</button>
+      <button class="btn-sm btn-amber" onclick="Reports.exportWeekly('pdf')">PDF</button>
+      <button class="btn-sm btn-amber" onclick="Reports.exportWeekly('jpg')">JPG</button>
+    </div>
+    <div class="table-scroll" style="max-height:min(65vh, 500px);">
+      <table><thead><tr><th>Rider</th><th>KM</th><th>Total</th><th>Paid</th><th>Pending</th><th>Total Pending</th></tr></thead><tbody id="weeklyRows"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<div id="monthlyModal" class="overlay hidden">
+  <div class="overlay-card" style="max-width:600px;">
+    <div class="card-head" style="margin-bottom:14px;">
+      <h2>Monthly Summary</h2>
+      <button class="modal-close" onclick="Menu.close('monthlyModal')">✕</button>
+    </div>
+    <div class="field"><label for="reportMonth">Month</label><input id="reportMonth" type="month" onchange="Reports.render()" /></div>
+    <div class="btn-row" style="margin-bottom:14px;">
+      <button class="btn-sm btn-amber" onclick="Reports.exportMonthly('csv')">CSV</button>
+      <button class="btn-sm btn-amber" onclick="Reports.exportMonthly('pdf')">PDF</button>
+      <button class="btn-sm btn-amber" onclick="Reports.exportMonthly('jpg')">JPG</button>
+    </div>
+    <div class="table-scroll" style="max-height:min(60vh, 460px);">
+      <table><thead><tr><th>Rider</th><th>KM</th><th>Total</th><th>Paid</th><th>Pending</th><th>Total Pending</th></tr></thead><tbody id="monthlyRows"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<div id="riderReportModal" class="overlay hidden">
+  <div class="overlay-card" style="max-width:680px;">
+    <div class="card-head" style="margin-bottom:14px;">
+      <h2>Rider Report</h2>
+      <button class="modal-close" onclick="Menu.close('riderReportModal')">✕</button>
+    </div>
+    <div class="field"><label for="riderReportSelect">Rider</label><select id="riderReportSelect" onchange="Reports.renderRiderReport()"></select></div>
+    <div class="row2" style="margin-top:10px;">
+      <div class="field"><label for="rrFrom">From</label><input id="rrFrom" type="date" onchange="Reports.renderRiderReport()" /></div>
+      <div class="field"><label for="rrTo">To</label><input id="rrTo" type="date" onchange="Reports.renderRiderReport()" /></div>
+    </div>
+    <div class="btn-row" style="margin:4px 0 14px;">
+      <button class="btn-sm btn-outline" onclick="Reports.setRiderReportRange('week')">This Week</button>
+      <button class="btn-sm btn-outline" onclick="Reports.setRiderReportRange('month')">This Month</button>
+      <button class="btn-sm btn-outline" onclick="Reports.setRiderReportRange('all')">Lifetime</button>
+    </div>
+    <div class="btn-row" style="margin:0 0 14px;">
+      <button class="btn-sm btn-amber" onclick="Reports.exportRiderReport('csv')">CSV</button>
+      <button class="btn-sm btn-amber" onclick="Reports.exportRiderReport('pdf')">PDF</button>
+      <button class="btn-sm btn-amber" onclick="Reports.exportRiderReport('jpg')">JPG</button>
+    </div>
+    <div class="odometer-row odo-row-4" style="margin:14px 0; border-radius:10px;">
+      <div class="odo"><div class="lbl">KM</div><div class="val num" id="rrKm">0.00</div></div>
+      <div class="odo"><div class="lbl">Total</div><div class="val amber num" id="rrTotal">0.00</div></div>
+      <div class="odo"><div class="lbl">Paid</div><div class="val green num" id="rrPaid">0.00</div></div>
+      <div class="odo"><div class="lbl">Pending</div><div class="val red num" id="rrPending">0.00</div></div>
+    </div>
+    <div class="table-scroll" style="max-height:min(55vh, 420px);">
+      <table><thead><tr><th>Date</th><th>KM</th><th>Total</th><th>Paid</th><th>Pending</th><th>Balance</th><th>Status</th></tr></thead><tbody id="riderReportRows"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<div id="backupModal" class="overlay hidden">
+  <div class="overlay-card" style="max-width:440px;">
+    <div class="card-head" style="margin-bottom:16px;">
+      <h2>Backup & Restore</h2>
+      <button class="modal-close" onclick="Menu.close('backupModal')">✕</button>
+    </div>
+    <div class="btn-row" style="margin-bottom:12px;">
+      <button class="btn btn-amber" style="flex:1" onclick="Backup.exportJSON()">Export JSON</button>
+      <button class="btn-outline" style="flex:1" onclick="Backup.exportCSV()">Export CSV</button>
+    </div>
+    <div class="field"><label for="importFile">Restore from JSON</label><input id="importFile" type="file" accept="application/json" onchange="Backup.import(event)" /></div>
+    <p class="note-muted">Data is saved automatically as you work. Export a backup regularly to keep a copy of your own.</p>
+  </div>
+</div>
+
+<div id="auditModal" class="overlay hidden">
+  <div class="overlay-card" style="max-width:520px;">
+    <div class="card-head" style="margin-bottom:16px;">
+      <h2>Audit Log</h2>
+      <button class="modal-close" onclick="Menu.close('auditModal')">✕</button>
+    </div>
+    <div class="table-scroll" style="max-height:400px;">
+      <table><thead><tr><th style="width:220px;">Time</th><th>Action</th></tr></thead><tbody id="auditRows"></tbody></table>
+    </div>
+  </div>
+</div>
+
+<aside id="sideMenu" class="drawer"></aside><script>
+/* ============================================================
+   FIREBASE — auth + per-user cloud storage
+   ============================================================ */
+const firebaseConfig = {
+  apiKey: "AIzaSyADm297kotJhrGe_TbM9dZCktoFDVBIIr4",
+  authDomain: "adjoy-rider-tracker.firebaseapp.com",
+  projectId: "adjoy-rider-tracker",
+  storageBucket: "adjoy-rider-tracker.firebasestorage.app",
+  messagingSenderId: "207253998908",
+  appId: "1:207253998908:web:17f549b4a947b327f5e239",
+  measurementId: "G-3CBEZGZVHM"
+};
+firebase.initializeApp(firebaseConfig);
+const fbAuth = firebase.auth();
+const fbDb = firebase.firestore();
+fbAuth.setPersistence(firebase.auth.Auth.Persistence.LOCAL);
+const Auth = (() => {
+  let attempted = false;
+  fbAuth.onAuthStateChanged(async (user) => {
+    if (!user) {
+      if (attempted) return;
+      attempted = true;
+      try { await fbAuth.signInAnonymously(); }
+      catch (e) {
+        console.error('Anonymous auth failed:', e);
+        document.getElementById('bootLoading')?.classList.add('hidden');
+        document.getElementById('appRoot')?.classList.remove('hidden');
+        await DataStore.load();
+      }
+      return;
+    }
+    document.getElementById('bootLoading')?.classList.add('hidden');
+    document.getElementById('appRoot')?.classList.remove('hidden');
+    await DataStore.load();
+  });
+  return { logout: async () => {} };
+})();
+
+/* ============================================================
+   STATE — single in-memory object, persisted per-user in Firestore
+   ============================================================ */
+const DataStore = (() => {
+  const MAX_LOGS = 100;
+  let state = { riders: [], entries: [], auditLogs: [], pin: '' };
+
+  function docRef(){
+    const user = fbAuth.currentUser;
+    if(!user) return null;
+    return fbDb.collection('users').doc(user.uid);
+  }
+
+  function defaultRiders(){
+    return [{id:'r1',name:'Rider 1'},{id:'r2',name:'Rider 2'},{id:'r3',name:'Rider 3'}];
+  }
+
+  async function load(){
+    try{
+      const ref = docRef();
+      if(!ref){ return; }
+      const snap = await ref.get();
+      if(snap.exists){
+        const parsed = snap.data();
+        state = {
+          riders: Array.isArray(parsed.riders) ? parsed.riders : defaultRiders(),
+          entries: Array.isArray(parsed.entries) ? parsed.entries : [],
+          auditLogs: Array.isArray(parsed.auditLogs) ? parsed.auditLogs : [],
+          pin: typeof parsed.pin === 'string' ? parsed.pin : ''
+        };
+      } else {
+        state = { riders: defaultRiders(), entries: [], auditLogs: [], pin: '' };
+        await persist();
+      }
+    }catch(e){
+      console.error('Load failed', e);
+      alert('Could not load your data from the cloud. Check your internet connection and reload.');
+    }
+    App.renderAll();
+  }
+
+  async function persist(){
+    try{
+      const ref = docRef();
+      if(!ref) return;
+      await ref.set(state);
+    }
+    catch(e){ console.error('Save failed', e); alert('Could not save to the cloud — check your internet connection.'); }
+  }
+
+  function log(action){
+    state.auditLogs.unshift({ id:id('log'), time:new Date().toISOString(), action });
+    state.auditLogs = state.auditLogs.slice(0, MAX_LOGS);
+  }
+
+  function id(prefix){ return prefix + '_' + Date.now() + '_' + Math.random().toString(36).slice(2,8); }
+
+  async function clearAll(){
+    PinSystem.require(async () => {
+      if(!confirm('Delete ALL riders, entries, and logs? This cannot be undone.')) return;
+      state = { riders:[], entries:[], auditLogs:[], pin: state.pin };
+      log('All data cleared');
+      await persist();
+      App.renderAll();
+      Entries.resetForm();
+      alert('All data deleted.');
+    }, 'Enter PIN to delete all data.');
+  }
+
+  return { get state(){ return state; }, load, persist, log, id, clearAll };
+})();
+
+/* ============================================================
+   PIN / OWNER ACCESS
+   ============================================================ */
+const PinSystem = (() => {
+  let unlocked = false; // in-memory only — resets on reload, by design
+
+  function hasPin(){ return !!DataStore.state.pin; }
+
+  async function change(){
+    const p1 = document.getElementById('newPin').value.trim();
+    const p2 = document.getElementById('confirmPin').value.trim();
+    if(!p1 || !p2) return alert('Enter and confirm the new PIN.');
+    if(p1 !== p2) return alert('PINs do not match.');
+    if(p1.length < 4) return alert('Use at least 4 characters.');
+
+    // Capture this BEFORE the PIN is written, otherwise the audit line
+    // would always read "PIN changed" — even the very first time one is set.
+    const existed = hasPin();
+
+    const proceed = async () => {
+      DataStore.state.pin = p1;
+      DataStore.log(existed ? 'PIN changed' : 'PIN created');
+      await DataStore.persist();
+      document.getElementById('newPin').value = '';
+      document.getElementById('confirmPin').value = '';
+      App.renderAuditLog();
+      alert('PIN saved.');
+    };
+
+    if(existed && !unlocked){
+      require(proceed, 'Enter current PIN to change it.');
+    } else {
+      await proceed();
+    }
+  }
+
+  function require(callback, message){
+    if(!hasPin()){
+      alert('Set an owner PIN in the Owner Panel first.');
+      return;
+    }
+    if(unlocked){ callback(); return; }
+    Overlay.open(message, async (entered) => {
+      if(entered !== DataStore.state.pin){ alert('Wrong PIN.'); return false; }
+      unlocked = true;
+      DataStore.log('Owner session unlocked');
+      await DataStore.persist();
+      App.renderAuditLog();
+      updateSessionUI();
+      callback();
+      return true;
+    });
+  }
+
+  function unlock(){
+    if(unlocked){ alert('Owner access is already unlocked.'); return; }
+    require(() => {}, 'Enter PIN to unlock owner access.');
+  }
+
+  async function lock(){
+    if(!unlocked){ alert('Owner access is already locked.'); return; }
+    unlocked = false;
+    DataStore.log('Owner session locked');
+    await DataStore.persist();
+    App.renderAuditLog();
+    updateSessionUI();
+  }
+
+  function updateSessionUI(){
+    document.querySelectorAll('.session-unlock-btn').forEach(b => b.disabled = unlocked);
+    document.querySelectorAll('.session-lock-btn').forEach(b => b.disabled = !unlocked);
+    const tag = document.getElementById('sessionTag');
+    if(tag){
+      tag.textContent = unlocked ? 'Unlocked' : 'Locked';
+      tag.className = 'tag ' + (unlocked ? 'open' : 'locked');
+    }
+  }
+
+  return { require, change, unlock, lock, updateSessionUI, get unlocked(){ return unlocked; } };
+})();
+
+/* ============================================================
+   PIN OVERLAY — one reusable modal for any PIN prompt
+   ============================================================ */
+const Overlay = (() => {
+  let onSubmit = null;
+
+  function open(message, handler){
+    onSubmit = handler;
+    document.getElementById('pinOverlayText').textContent = message;
+    document.getElementById('pinInput').value = '';
+    document.getElementById('pinOverlay').classList.remove('hidden');
+    setTimeout(() => document.getElementById('pinInput').focus(), 40);
+  }
+
+  async function submit(){
+    const value = document.getElementById('pinInput').value;
+    if(onSubmit){
+      const ok = await onSubmit(value);
+      if(ok) close();
+    }
+  }
+
+  function close(){
+    document.getElementById('pinOverlay').classList.add('hidden');
+    onSubmit = null;
+  }
+
+  function isOpen(){ return !document.getElementById('pinOverlay').classList.contains('hidden'); }
+
+  return { open, submit, close, isOpen };
+})();
+
+/* ============================================================
+   MENU (permanent left-side panel; collapses to a bottom
+   drawer on narrow screens, toggled by the floating button)
+   ============================================================ */
+const Menu = (() => {
+  function panel(){ return document.getElementById('sideMenu'); }
+
+  function toggle(){ panel().classList.toggle('open'); }
+  function closeDropdown(){ panel().classList.remove('open'); }
+
+  function action(fn){ closeDropdown(); fn(); }
+
+  function open(modalId){
+    closeDropdown();
+    document.getElementById(modalId).classList.remove('hidden');
+  }
+  function close(modalId){
+    document.getElementById(modalId).classList.add('hidden');
+  }
+
+  // Only relevant for the mobile drawer (permanent desktop panel is
+  // always visible via CSS, so this simply no-ops there).
+  document.addEventListener('click', e => {
+    const el = panel();
+    const toggleBtn = document.querySelector('.menu-toggle-mobile');
+    if(el && !el.contains(e.target) && toggleBtn && !toggleBtn.contains(e.target)) closeDropdown();
+  });
+
+  // Escape closes whatever is on top: the PIN prompt first, then any
+  // open report/settings modal.
+  document.addEventListener('keydown', e => {
+    if(e.key !== 'Escape') return;
+    if(Overlay.isOpen()){ Overlay.close(); return; }
+    const openModal = [...document.querySelectorAll('.overlay')]
+      .filter(m => m.id !== 'pinOverlay' && !m.classList.contains('hidden')).pop();
+    if(openModal) openModal.classList.add('hidden');
+    else closeDropdown();
+  });
+
+  return { toggle, open, close, action };
+})();
+
+/* ============================================================
+   HELPERS
+   ============================================================ */
+const money = v => Number(v || 0).toFixed(2);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[c]));
+const isoDateStr = d => `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+const todayISO = () => isoDateStr(new Date()); // local date, not UTC — new Date().toISOString() would show yesterday's date for hours near local midnight in timezones ahead of UTC (e.g. Bangladesh, UTC+6)
+const parseLocalDate = dateStr => { const [y,m,d] = String(dateStr).split('-').map(Number); return new Date(y, (m||1)-1, d||1); };
+
+/* Export branding intentionally omitted. */
+function creditLine(){ return ''; }
+
+function riderMap(){ return Object.fromEntries(DataStore.state.riders.map(r => [r.id, r.name])); }
+
+function riderPendingMap(){
+  const map = {};
+  DataStore.state.entries.forEach(e => { map[e.riderId] = (map[e.riderId] || 0) + Number(e.pending || 0); });
+  return map;
+}
+
+/* TRUE RUNNING BALANCE.
+   Every entry — even several on the same date — is chained in real
+   chronological order: first by date, then (for same-date entries) by
+   the order they were actually created (using createdAt, falling back
+   to the timestamp embedded in the entry id for older entries that
+   predate the createdAt field). Editing an entry never re-orders it;
+   only its own date/pending values change.
+   Returns { sorted: {riderId: [entries in true order]}, balance: {entryId: runningTotalAfterThisEntry} } */
+function entryTimestamp(e){
+  if(e.createdAt){
+    const t = Date.parse(e.createdAt);
+    if(!Number.isNaN(t)) return t;
+  }
+  const m = String(e.id || '').match(/_(\d+)_/);
+  return m ? Number(m[1]) : 0;
+}
+
+function riderRunningTotals(entries){
+  const byRider = {};
+  entries.forEach(e => { (byRider[e.riderId] = byRider[e.riderId] || []).push(e); });
+
+  const sorted = {};
+  const balance = {};
+
+  Object.keys(byRider).forEach(riderId => {
+    const list = byRider[riderId].slice().sort((a,b) => {
+      if(a.date !== b.date) return a.date < b.date ? -1 : 1;
+      return entryTimestamp(a) - entryTimestamp(b);
+    });
+    let running = 0;
+    list.forEach(e => {
+      running += Number(e.pending || 0);
+      balance[e.id] = running;
+    });
+    sorted[riderId] = list;
+  });
+
+  return { sorted, balance };
+}
+
+/* Convenience: running balance for every rider as of the end of one
+   specific date (i.e. after all their entries dated on/before `day`,
+   processed in true chronological order). Pass excludeId when
+   previewing an edit so the entry being edited doesn't get counted
+   twice (once from its old stored value, once from the live form). */
+function riderPendingAsOf(day, excludeId){
+  const source = excludeId ? DataStore.state.entries.filter(e => e.id !== excludeId) : DataStore.state.entries;
+  const { sorted, balance } = riderRunningTotals(source);
+  const map = {};
+  DataStore.state.riders.forEach(r => {
+    const list = (sorted[r.id] || []).filter(e => e.date <= day);
+    map[r.id] = list.length ? balance[list[list.length - 1].id] : 0;
+  });
+  return map;
+}
+
+function entryStatus(e){
+  const total = Number(e.total||0), paid = Number(e.paid||0);
+  if(paid >= total && paid > 0) return 'paid';
+  if(total <= 0) return paid > 0 ? 'paid' : 'unpaid';
+  if(paid > 0) return 'partial';
+  return 'unpaid';
+}
+function statusBadge(s){
+  return `<span class="badge ${s}">${s.charAt(0).toUpperCase()+s.slice(1)}</span>`;
+}
+
+function renderRows(tbodyId, rows, colspan, rowHtmlFn, emptyText){
+  const tbody = document.getElementById(tbodyId);
+  if(!rows.length){
+    tbody.innerHTML = `<tr class="empty-row"><td colspan="${colspan}">${emptyText}</td></tr>`;
+    return;
+  }
+  tbody.innerHTML = rows.map(rowHtmlFn).join('');
+}
+
+function toCsv(rows){
+  return rows.map(r => r.map(v => `"${String(v??'').replace(/"/g,'""')}"`).join(',')).join('\n');
+}
+
+function downloadFile(filename, content, type){
+  const blob = new Blob([content], { type });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  // Revoking immediately can cancel the download in some browsers —
+  // give it a moment to start first.
+  setTimeout(() => URL.revokeObjectURL(url), 2000);
+}
+
+function formatDateLong(d){
+  return d.toLocaleDateString(undefined, { year:'numeric', month:'short', day:'numeric' });
+}
+
+/* Builds an off-screen, print-friendly snapshot (title + optional stat chips + table)
+   used as the source for JPG/PDF report exports. Caller removes it after capture. */
+function buildPrintable(title, subtitle, headers, rows, statChips){
+  const wrap = document.createElement('div');
+  wrap.style.cssText = 'position:fixed; left:-10000px; top:0; width:820px; background:#ffffff; padding:32px; font-family:Arial,Helvetica,sans-serif; color:#12151c;';
+
+  const statsHtml = (statChips && statChips.length) ? `
+    <div style="display:flex; gap:14px; margin-bottom:20px; flex-wrap:wrap;">
+      ${statChips.map(s => `
+        <div style="background:#12151c; color:#fff; padding:10px 16px; border-radius:8px; min-width:100px;">
+          <div style="font-size:10px; text-transform:uppercase; letter-spacing:0.06em; color:#9aa2b1; margin-bottom:4px;">${esc(s.label)}</div>
+          <div style="font-size:17px; font-weight:700;">${esc(s.value)}</div>
+        </div>`).join('')}
+    </div>` : '';
+
+  const headHtml = headers.map(h =>
+    `<th style="padding:8px 10px; text-align:left; font-size:11px; text-transform:uppercase; letter-spacing:0.05em; color:#555; border-bottom:2px solid #12151c;">${esc(h)}</th>`
+  ).join('');
+  const bodyHtml = rows.length
+    ? rows.map(r => `<tr>${r.map(c => `<td style="padding:8px 10px; border-bottom:1px solid #e2ddd0; font-size:13px;">${esc(String(c))}</td>`).join('')}</tr>`).join('')
+    : `<tr><td colspan="${headers.length}" style="padding:20px; text-align:center; color:#888;">No data</td></tr>`;
+
+  wrap.innerHTML = `
+    <div style="margin-bottom:18px;">
+      <div style="font-size:22px; font-weight:800; letter-spacing:-0.01em;">${esc(title)}</div>
+      <div style="font-size:12px; color:#666; margin-top:4px;">${esc(subtitle)}</div>
+    </div>
+    ${statsHtml}
+    <table style="width:100%; border-collapse:collapse;"><thead><tr>${headHtml}</tr></thead><tbody>${bodyHtml}</tbody></table>
+    ${creditLine() ? `<div style="margin-top:22px; padding-top:14px; border-top:1px solid #e2ddd0; font-size:11px; color:#999; text-align:center;">${esc(creditLine())}</div>` : ''}
+  `;
+  document.body.appendChild(wrap);
+  return wrap;
+}
+
+async function elementToCanvas(node){
+  try{
+    return await html2canvas(node, { backgroundColor: '#ffffff', scale: 2 });
+  } finally {
+    // Always clear the off-screen node, even if the capture throws —
+    // otherwise a failed export would leave invisible junk in the DOM
+    // that piles up with every retry.
+    if(node.parentNode) node.parentNode.removeChild(node);
+  }
+}
+
+function downloadCanvasAsJPG(canvas, filename){
+  const a = document.createElement('a');
+  a.download = filename;
+  a.href = canvas.toDataURL('image/jpeg', 0.95);
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function downloadCanvasAsPDF(canvas, filename){
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'pt', 'a4');
+  const margin = 24;
+  const pageWidth = pdf.internal.pageSize.getWidth() - margin * 2;
+  const pageHeight = pdf.internal.pageSize.getHeight() - margin * 2;
+  const imgWidth = pageWidth;
+  const imgHeight = canvas.height * imgWidth / canvas.width;
+  const imgData = canvas.toDataURL('image/jpeg', 0.95);
+
+  let heightLeft = imgHeight;
+  let y = margin;
+  pdf.addImage(imgData, 'JPEG', margin, y, imgWidth, imgHeight);
+  heightLeft -= pageHeight;
+
+  while (heightLeft > 0){
+    y = margin - (imgHeight - heightLeft);
+    pdf.addPage();
+    pdf.addImage(imgData, 'JPEG', margin, y, imgWidth, imgHeight);
+    heightLeft -= pageHeight;
+  }
+  pdf.save(filename);
+}
+
+async function exportVisual(title, subtitle, headers, rows, baseFilename, format, statChips){
+  if(typeof html2canvas === 'undefined' || (format === 'pdf' && !(window.jspdf && window.jspdf.jsPDF))){
+    alert('Could not load the PDF/JPG export library — check your internet connection and try again.');
+    return false;
+  }
+  const node = buildPrintable(title, subtitle, headers, rows, statChips);
+  try{
+    const canvas = await elementToCanvas(node);
+    if(format === 'jpg') downloadCanvasAsJPG(canvas, baseFilename + '.jpg');
+    else downloadCanvasAsPDF(canvas, baseFilename + '.pdf');
+    return true;
+  }catch(e){
+    console.error('Export failed', e);
+    alert('Could not generate the file. Please try again.');
+    return false;
+  }
+}
+
+/* ============================================================
+   RIDERS
+   ============================================================ */
+const Riders = (() => {
+  let editingId = null;
+
+  async function add(){
+    const input = document.getElementById('riderName');
+    const name = input.value.trim();
+    if(!name) return alert('Enter a rider name.');
+    if(DataStore.state.riders.some(r => r.name.toLowerCase() === name.toLowerCase()))
+      return alert('This rider already exists.');
+    DataStore.state.riders.push({ id: DataStore.id('rider'), name });
+    DataStore.log('Added rider: ' + name);
+    await DataStore.persist();
+    input.value = '';
+    App.renderAll();
+  }
+
+  function edit(riderId){
+    PinSystem.require(() => {
+      editingId = riderId;
+      render();
+      setTimeout(() => {
+        const el = document.getElementById('riderEditInput_' + riderId);
+        if(el){ el.focus(); el.select(); }
+      }, 30);
+    }, 'Enter PIN to edit rider.');
+  }
+
+  function cancelEdit(){
+    editingId = null;
+    render();
+  }
+
+  async function saveEdit(riderId){
+    const input = document.getElementById('riderEditInput_' + riderId);
+    const name = input.value.trim();
+    if(!name) return alert('Enter a rider name.');
+    if(DataStore.state.riders.some(r => r.id !== riderId && r.name.toLowerCase() === name.toLowerCase()))
+      return alert('Another rider already has this name.');
+    const rider = DataStore.state.riders.find(r => r.id === riderId);
+    if(!rider) return;
+    const oldName = rider.name;
+    rider.name = name;
+    editingId = null;
+    if(oldName !== name) DataStore.log(`Renamed rider: ${oldName} → ${name}`);
+    await DataStore.persist();
+    App.renderAll();
+  }
+
+  function remove(riderId){
+    PinSystem.require(async () => {
+      const rider = DataStore.state.riders.find(r => r.id === riderId);
+      const entryCount = DataStore.state.entries.filter(e => e.riderId === riderId).length;
+      const warning = entryCount
+        ? `Delete "${rider ? rider.name : 'this rider'}" AND all ${entryCount} of their entries? This cannot be undone.`
+        : `Delete "${rider ? rider.name : 'this rider'}"?`;
+      if(!confirm(warning)) return;
+      DataStore.state.riders = DataStore.state.riders.filter(r => r.id !== riderId);
+      DataStore.state.entries = DataStore.state.entries.filter(e => e.riderId !== riderId);
+      DataStore.log(`Deleted rider: ${rider ? rider.name : riderId}${entryCount ? ` (with ${entryCount} entries)` : ''}`);
+      await DataStore.persist();
+      App.renderAll();
+    }, 'Enter PIN to delete rider.');
+  }
+
+  function populateSelects(){
+    const riders = DataStore.state.riders;
+    const options = riders.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('');
+
+    const entryRider = document.getElementById('entryRider');
+    const prevEntryRider = entryRider.value;
+    entryRider.innerHTML = options || '<option value="">No riders yet</option>';
+    if(prevEntryRider && riders.some(r => r.id === prevEntryRider)) entryRider.value = prevEntryRider;
+
+    const fRider = document.getElementById('fRider');
+    const prevSelected = fRider.value;
+    fRider.innerHTML = '<option value="">All Riders</option>' + options;
+    if(prevSelected && riders.some(r => r.id === prevSelected)) fRider.value = prevSelected;
+  }
+
+  function render(){
+    const pending = riderPendingMap();
+    renderRows('riderRows', DataStore.state.riders, 3, r => {
+      if(editingId === r.id){
+        return `<tr>
+          <td colspan="2"><input id="riderEditInput_${r.id}" type="text" value="${esc(r.name)}" onkeydown="if(event.key==='Enter')Riders.saveEdit('${r.id}'); if(event.key==='Escape')Riders.cancelEdit();" /></td>
+          <td><div class="btn-row">
+            <button class="btn-sm btn" onclick="Riders.saveEdit('${r.id}')">Save</button>
+            <button class="btn-sm btn-outline" onclick="Riders.cancelEdit()">Cancel</button>
+          </div></td>
+        </tr>`;
+      }
+      return `<tr>
+        <td>${esc(r.name)}</td>
+        <td class="num">${money(pending[r.id] || 0)}</td>
+        <td><div class="btn-row">
+          <button class="btn-sm btn-outline" onclick="Riders.edit('${r.id}')">Edit</button>
+          <button class="btn-sm btn-red" onclick="Riders.remove('${r.id}')">Delete</button>
+        </div></td>
+      </tr>`;
+    }, 'No riders yet.');
+  }
+
+  return { add, edit, cancelEdit, saveEdit, remove, populateSelects, render };
+})();
+
+
+/* ============================================================
+   ENTRIES
+   ============================================================ */
+const Entries = (() => {
+  let editingId = null;
+
+  function preview(){
+    const riderId = document.getElementById('entryRider').value;
+    const date = document.getElementById('entryDate').value || todayISO();
+    const km = parseFloat(document.getElementById('entryKm').value || 0);
+    const rate = parseFloat(document.getElementById('entryRate').value || 0);
+    const paid = parseFloat(document.getElementById('entryPaid').value || 0);
+    const total = km * rate, pending = total - paid;
+    let status = 'Unpaid';
+    if(total > 0 && paid >= total) status = 'Paid';
+    else if(paid > 0) status = 'Partial';
+
+    const asOfMap = riderId ? riderPendingAsOf(date, editingId) : {};
+    const baseline = asOfMap[riderId] || 0;
+    const totalPending = baseline + pending;
+
+    document.getElementById('prevTotal').textContent = money(total);
+    document.getElementById('prevPending').textContent = money(pending);
+    document.getElementById('prevTotalPending').textContent = money(totalPending);
+    document.getElementById('prevStatus').textContent = status;
+  }
+
+  async function save(){
+    const riderId = document.getElementById('entryRider').value;
+    const date = document.getElementById('entryDate').value;
+    const km = parseFloat(document.getElementById('entryKm').value || 0);
+    const rate = parseFloat(document.getElementById('entryRate').value || 0);
+    const paid = parseFloat(document.getElementById('entryPaid').value || 0);
+    const note = document.getElementById('entryNote').value.trim();
+
+    if(!riderId) return alert('Add a rider first.');
+    if(!date) return alert('Select a date.');
+    // Guard against a blank/garbled number field silently becoming NaN
+    // and poisoning every total from here on.
+    if([km, rate, paid].some(v => Number.isNaN(v))) return alert('KM, Rate and Paid must be valid numbers.');
+    if(km < 0 || rate < 0 || paid < 0) return alert('Negative values are not allowed.');
+
+    const total = km * rate;
+    if(paid > total && !confirm('Paid amount is more than the total. Continue?')) return;
+
+    const pending = total - paid;
+    const name = riderMap()[riderId] || riderId;
+
+    if(editingId){
+      const idx = DataStore.state.entries.findIndex(e => e.id === editingId);
+      if(idx !== -1){
+        DataStore.state.entries[idx] = { ...DataStore.state.entries[idx], riderId, date, km, rate, total, paid, pending, note };
+        DataStore.log(`Edited entry — ${name} on ${date}`);
+      }
+    } else {
+      DataStore.state.entries.push({ id: DataStore.id('entry'), riderId, date, km, rate, total, paid, pending, note, createdAt: new Date().toISOString() });
+      DataStore.log(`Added entry — ${name} on ${date}`);
+    }
+    await DataStore.persist();
+    resetForm();
+    App.renderAll();
+  }
+
+  function edit(entryId){
+    PinSystem.require(() => {
+      const e = DataStore.state.entries.find(x => x.id === entryId);
+      if(!e) return;
+      editingId = entryId;
+      document.getElementById('entryTitle').textContent = 'Edit Ride Entry';
+      document.getElementById('entrySaveBtn').textContent = 'Update Entry';
+      document.getElementById('entryDate').value = e.date;
+      document.getElementById('entryRider').value = e.riderId;
+      document.getElementById('entryKm').value = e.km;
+      document.getElementById('entryRate').value = e.rate;
+      document.getElementById('entryPaid').value = e.paid;
+      document.getElementById('entryNote').value = e.note || '';
+      preview();
+      window.scrollTo({ top:0, behavior:'smooth' });
+    }, 'Enter PIN to edit this entry.');
+  }
+
+  function remove(entryId){
+    PinSystem.require(async () => {
+      if(!confirm('Delete this entry?')) return;
+      const e = DataStore.state.entries.find(x => x.id === entryId);
+      // If the entry currently loaded into the form is the one being
+      // deleted, clear the form — otherwise "Update Entry" would try to
+      // save a row that no longer exists.
+      if(editingId === entryId) resetForm();
+      DataStore.state.entries = DataStore.state.entries.filter(x => x.id !== entryId);
+      DataStore.log('Deleted entry: ' + (e ? e.date : entryId));
+      await DataStore.persist();
+      App.renderAll();
+    }, 'Enter PIN to delete this entry.');
+  }
+
+  function resetForm(){
+    editingId = null;
+    document.getElementById('entryTitle').textContent = 'Add Ride Entry';
+    document.getElementById('entrySaveBtn').textContent = 'Save Entry';
+    document.getElementById('entryKm').value = '';
+    document.getElementById('entryRate').value = '3.5';
+    document.getElementById('entryPaid').value = '0';
+    document.getElementById('entryNote').value = '';
+    document.getElementById('entryDate').value = todayISO();
+    preview();
+  }
+
+  function clearFilters(){
+    document.getElementById('fSearch').value = '';
+    document.getElementById('fRider').value = '';
+    document.getElementById('fMonth').value = '';
+    document.getElementById('fStatus').value = '';
+    render();
+  }
+
+  function render(){
+    const rMap = riderMap();
+    const search = document.getElementById('fSearch').value.trim().toLowerCase();
+    const fRider = document.getElementById('fRider').value;
+    const fMonth = document.getElementById('fMonth').value;
+    const fStatus = document.getElementById('fStatus').value;
+
+    const { balance } = riderRunningTotals(DataStore.state.entries);
+
+    const rows = [...DataStore.state.entries]
+      .sort((a,b) => {
+        if(a.date !== b.date) return b.date.localeCompare(a.date); // newest date first
+        // Within the same date, order by true creation time (most recent first) —
+        // the same chronology riderRunningTotals uses to build the running balance,
+        // so the table's visible order always matches how the balance was actually computed.
+        return entryTimestamp(b) - entryTimestamp(a);
+      })
+      .filter(e => {
+        const name = (rMap[e.riderId]||'').toLowerCase();
+        const note = (e.note||'').toLowerCase();
+        const status = entryStatus(e);
+        return (!search || name.includes(search) || note.includes(search))
+          && (!fRider || e.riderId === fRider)
+          && (!fMonth || e.date.startsWith(fMonth))
+          && (!fStatus || status === fStatus);
+      });
+
+    renderRows('entryRows', rows, 10, e => {
+      const status = entryStatus(e);
+      const riderTotalPending = balance[e.id] ?? 0;
+      return `<tr>
+        <td>${e.date}</td>
+        <td>${esc(rMap[e.riderId] || 'Unknown')}</td>
+        <td class="num">${money(e.km)}</td>
+        <td class="num">${money(e.total)}</td>
+        <td class="num">${money(e.paid)}</td>
+        <td class="num">${money(e.pending)}</td>
+        <td class="num">${money(riderTotalPending)}</td>
+        <td>${statusBadge(status)}</td>
+        <td class="note-cell" title="${esc(e.note||'')}">${esc(e.note||'')}</td>
+        <td><div class="btn-row" style="gap:6px; flex-wrap:nowrap;">
+          <button class="btn-xs btn-outline" onclick="Entries.edit('${e.id}')">Edit</button>
+          <button class="btn-xs btn-red" onclick="Entries.remove('${e.id}')">Delete</button>
+        </div></td>
+      </tr>`;
+    }, 'No entries found.');
+  }
+
+  return { preview, save, edit, remove, resetForm, clearFilters, render };
+})();
+
+/* ============================================================
+   DASHBOARD + REPORTS
+   ============================================================ */
+const Dashboard = {
+  render(){
+    const entries = DataStore.state.entries;
+    const sum = key => entries.reduce((s,e) => s + Number(e[key]||0), 0);
+    const month = todayISO().slice(0,7);
+    const monthEntries = entries.filter(e => e.date.startsWith(month));
+    const msum = key => monthEntries.reduce((s,e) => s + Number(e[key]||0), 0);
+
+    document.getElementById('statKm').textContent = money(sum('km'));
+    document.getElementById('statAmount').textContent = money(sum('total'));
+    document.getElementById('statPaid').textContent = money(sum('paid'));
+    document.getElementById('statPending').textContent = money(sum('pending'));
+    document.getElementById('statMonthKm').textContent = money(msum('km'));
+    document.getElementById('statMonthAmount').textContent = money(msum('total'));
+  }
+};
+
+const Reports = (() => {
+  function startOfWeek(d){
+    const date = new Date(d);
+    const day = date.getDay(); // 0=Sun, 1=Mon, ... 6=Sat
+    const daysSinceSaturday = (day + 1) % 7; // Sat->0, Sun->1, Mon->2 ... Fri->6
+    date.setDate(date.getDate() - daysSinceSaturday);
+    date.setHours(0,0,0,0);
+    return date; // always a Saturday; caller adds 6 days to reach the following Friday
+  }
+
+  function summarize(entries, keepAllRiders){
+    const table = {};
+    DataStore.state.riders.forEach(r => table[r.id] = { id:r.id, name:r.name, km:0, total:0, paid:0, pending:0 });
+    entries.forEach(e => {
+      if(!table[e.riderId]) return;
+      const t = table[e.riderId];
+      t.km += Number(e.km||0); t.total += Number(e.total||0);
+      t.paid += Number(e.paid||0); t.pending += Number(e.pending||0);
+    });
+    const rows = Object.values(table);
+    return keepAllRiders ? rows : rows.filter(r => r.km || r.total || r.paid || r.pending);
+  }
+
+  /* Only the riders who actually have an entry in this period.
+     Presence of an entry is the test — not whether the numbers add up to
+     something non-zero — so a rider with a genuine 0.00 KM entry still
+     appears, while riders with no entry at all are left out entirely. */
+  function summarizeActive(entries){
+    const active = new Set(entries.map(e => e.riderId));
+    return summarize(entries, true).filter(r => active.has(r.id));
+  }
+
+  function summaryTableHtml(rows, totalPendingMap){
+    if(!rows.length) return `<tr class="empty-row"><td colspan="6">No data.</td></tr>`;
+    return rows.map(r => `<tr>
+      <td>${esc(r.name)}</td><td class="num">${money(r.km)}</td><td class="num">${money(r.total)}</td>
+      <td class="num">${money(r.paid)}</td><td class="num">${money(r.pending)}</td>
+      <td class="num">${money((totalPendingMap && totalPendingMap[r.id]) || 0)}</td>
+    </tr>`).join('');
+  }
+
+  function monthEndDate(monthStr){
+    if(!monthStr) return todayISO(); // "All time" — use today's balance
+    const [y,m] = monthStr.split('-').map(Number);
+    return isoDateStr(new Date(y, m, 0)); // day 0 of next month = last day of this month
+  }
+
+  function render(){
+    populateRiderSelect();
+
+    const weekStart = startOfWeek(new Date());
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate()+6); weekEnd.setHours(23,59,59,999);
+    const weekly = DataStore.state.entries.filter(e => { const d = parseLocalDate(e.date); return d >= weekStart && d <= weekEnd; });
+    document.getElementById('weeklyRows').innerHTML = summaryTableHtml(summarizeActive(weekly), riderPendingAsOf(isoDateStr(weekEnd)));
+
+    const day = document.getElementById('reportDay').value || todayISO();
+    const dailyRiderId = document.getElementById('dailyRiderSelect').value;
+    const daily = DataStore.state.entries
+      .filter(e => e.date === day)
+      .filter(e => !dailyRiderId || e.riderId === dailyRiderId);
+    // Only riders who actually worked on this date — riders with no entry
+    // for the day are no longer listed as empty 0.00 rows. Same rule the
+    // CSV/PDF/JPG export uses, so screen and file always agree.
+    let dailyRows = summarizeActive(daily);
+    if(dailyRiderId) dailyRows = dailyRows.filter(r => r.id === dailyRiderId);
+    document.getElementById('dailyRows').innerHTML = summaryTableHtml(dailyRows, riderPendingAsOf(day));
+
+    const month = document.getElementById('reportMonth').value;
+    const monthly = DataStore.state.entries.filter(e => !month || e.date.startsWith(month));
+    document.getElementById('monthlyRows').innerHTML = summaryTableHtml(summarizeActive(monthly), riderPendingAsOf(monthEndDate(month)));
+  }
+
+  function populateRiderSelect(){
+    const sel = document.getElementById('riderReportSelect');
+    const current = sel.value;
+    sel.innerHTML = DataStore.state.riders.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('')
+      || '<option value="">No riders yet</option>';
+    if(current && DataStore.state.riders.some(r => r.id === current)) sel.value = current;
+
+    const dailySel = document.getElementById('dailyRiderSelect');
+    const dailyCurrent = dailySel.value;
+    dailySel.innerHTML = '<option value="">All Riders</option>' +
+      DataStore.state.riders.map(r => `<option value="${r.id}">${esc(r.name)}</option>`).join('');
+    if(dailyCurrent && DataStore.state.riders.some(r => r.id === dailyCurrent)) dailySel.value = dailyCurrent;
+  }
+
+  function riderReportEntries(){
+    const riderId = document.getElementById('riderReportSelect').value;
+    const from = document.getElementById('rrFrom').value;
+    const to = document.getElementById('rrTo').value;
+    return DataStore.state.entries
+      .filter(e => e.riderId === riderId)
+      .filter(e => !from || e.date >= from)
+      .filter(e => !to || e.date <= to)
+      .sort((a,b) => {
+        if(a.date !== b.date) return b.date.localeCompare(a.date); // newest date first
+        return entryTimestamp(b) - entryTimestamp(a); // within the same date, most recently created first
+      });
+  }
+
+  function setRiderReportRange(preset){
+    const fromEl = document.getElementById('rrFrom');
+    const toEl = document.getElementById('rrTo');
+    if(preset === 'all'){
+      fromEl.value = '';
+      toEl.value = '';
+    } else if(preset === 'week'){
+      const start = startOfWeek(new Date());
+      const end = new Date(start); end.setDate(start.getDate()+6);
+      fromEl.value = isoDateStr(start);
+      toEl.value = isoDateStr(end);
+    } else if(preset === 'month'){
+      const now = new Date();
+      const start = new Date(now.getFullYear(), now.getMonth(), 1);
+      const end = new Date(now.getFullYear(), now.getMonth()+1, 0);
+      fromEl.value = isoDateStr(start);
+      toEl.value = isoDateStr(end);
+    }
+    renderRiderReport();
+  }
+
+  function renderRiderReport(){
+    const riderId = document.getElementById('riderReportSelect').value;
+    const entries = riderReportEntries();
+    const { sorted, balance } = riderRunningTotals(DataStore.state.entries);
+
+    const sum = key => entries.reduce((s,e) => s + Number(e[key]||0), 0);
+    document.getElementById('rrKm').textContent = money(sum('km'));
+    document.getElementById('rrTotal').textContent = money(sum('total'));
+    document.getElementById('rrPaid').textContent = money(sum('paid'));
+
+    // Pending: always the rider's current lifetime outstanding balance,
+    // independent of whatever Week/Month/date range is selected for the
+    // KM/Total/Paid figures and the entries list below.
+    const riderList = sorted[riderId] || [];
+    const pendingDisplay = riderList.length ? balance[riderList[riderList.length - 1].id] : 0;
+    document.getElementById('rrPending').textContent = money(pendingDisplay);
+
+    renderRows('riderReportRows', entries, 7, e => `<tr>
+      <td>${e.date}</td>
+      <td class="num">${money(e.km)}</td>
+      <td class="num">${money(e.total)}</td>
+      <td class="num">${money(e.paid)}</td>
+      <td class="num">${money(e.pending)}</td>
+      <td class="num">${money(balance[e.id] ?? 0)}</td>
+      <td>${statusBadge(entryStatus(e))}</td>
+    </tr>`, 'No entries in this range.');
+  }
+
+  function openRiderReport(){
+    populateRiderSelect();
+    document.getElementById('rrFrom').value = '';
+    document.getElementById('rrTo').value = '';
+    renderRiderReport();
+    Menu.open('riderReportModal');
+  }
+
+  async function exportDaily(format){
+    const day = document.getElementById('reportDay').value || todayISO();
+    const dailyRiderId = document.getElementById('dailyRiderSelect').value;
+    const daily = DataStore.state.entries
+      .filter(e => e.date === day)
+      .filter(e => !dailyRiderId || e.riderId === dailyRiderId);
+    if(!daily.length) return alert('No entries found for this date' + (dailyRiderId ? ' for this rider.' : '.'));
+    let rows = summarizeActive(daily);
+    if(dailyRiderId) rows = rows.filter(r => r.id === dailyRiderId);
+    const totalPendingMap = riderPendingAsOf(day);
+    const riderSuffix = dailyRiderId ? '-' + (riderMap()[dailyRiderId]||'rider').trim().toLowerCase().replace(/\s+/g,'-') : '';
+    const subtitle = `Date: ${formatDateLong(parseLocalDate(day))}` + (dailyRiderId ? ` · ${riderMap()[dailyRiderId]||''}` : '');
+
+    if(format === 'csv'){
+      downloadFile(`daily-fuel-cost-report-${day}${riderSuffix}.csv`, toCsv([
+        ['Rider','KM','Total','Paid','Pending','Total Pending'],
+        ...rows.map(r => [r.name, r.km, r.total, r.paid, r.pending, totalPendingMap[r.id]||0])
+      ]), 'text/csv;charset=utf-8;');
+    } else {
+      const ok = await exportVisual('Daily Fuel Cost Report', subtitle, ['Rider','KM','Total','Paid','Pending','Total Pending'],
+        rows.map(r => [r.name, money(r.km), money(r.total), money(r.paid), money(r.pending), money(totalPendingMap[r.id]||0)]),
+        `daily-fuel-cost-report-${day}${riderSuffix}`, format);
+      if(!ok) return;
+    }
+    DataStore.log(`Generated daily fuel cost report — ${day} (${format.toUpperCase()})`);
+    await DataStore.persist();
+    auditRows();
+  }
+
+  async function exportWeekly(format){
+    const weekStart = startOfWeek(new Date());
+    const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate()+6); weekEnd.setHours(23,59,59,999);
+    const weekly = DataStore.state.entries.filter(e => { const d = parseLocalDate(e.date); return d >= weekStart && d <= weekEnd; });
+    if(!weekly.length) return alert('No entries found for this week.');
+    const rows = summarizeActive(weekly);
+    const totalPendingMap = riderPendingAsOf(isoDateStr(weekEnd));
+    const subtitle = `Week of ${formatDateLong(weekStart)} – ${formatDateLong(weekEnd)}`;
+
+    if(format === 'csv'){
+      downloadFile(`weekly-report-${todayISO()}.csv`, toCsv([
+        ['Rider','KM','Total','Paid','Pending','Total Pending'],
+        ...rows.map(r => [r.name, r.km, r.total, r.paid, r.pending, totalPendingMap[r.id]||0])
+      ]), 'text/csv;charset=utf-8;');
+    } else {
+      const ok = await exportVisual('Weekly Report', subtitle, ['Rider','KM','Total','Paid','Pending','Total Pending'],
+        rows.map(r => [r.name, money(r.km), money(r.total), money(r.paid), money(r.pending), money(totalPendingMap[r.id]||0)]),
+        `weekly-report-${todayISO()}`, format);
+      if(!ok) return;
+    }
+    DataStore.log(`Generated weekly report (${format.toUpperCase()})`);
+    await DataStore.persist();
+    auditRows();
+  }
+
+  async function exportMonthly(format){
+    const month = document.getElementById('reportMonth').value;
+    const monthly = DataStore.state.entries.filter(e => !month || e.date.startsWith(month));
+    if(!monthly.length) return alert('No entries found for this month.');
+    const rows = summarizeActive(monthly);
+    const totalPendingMap = riderPendingAsOf(monthEndDate(month));
+    const subtitle = month ? `Month of ${month}` : 'All time';
+
+    if(format === 'csv'){
+      downloadFile(`monthly-report-${month || 'all'}.csv`, toCsv([
+        ['Rider','KM','Total','Paid','Pending','Total Pending'],
+        ...rows.map(r => [r.name, r.km, r.total, r.paid, r.pending, totalPendingMap[r.id]||0])
+      ]), 'text/csv;charset=utf-8;');
+    } else {
+      const ok = await exportVisual('Monthly Summary', subtitle, ['Rider','KM','Total','Paid','Pending','Total Pending'],
+        rows.map(r => [r.name, money(r.km), money(r.total), money(r.paid), money(r.pending), money(totalPendingMap[r.id]||0)]),
+        `monthly-report-${month || 'all'}`, format);
+      if(!ok) return;
+    }
+    DataStore.log(`Generated monthly report${month ? ' — ' + month : ''} (${format.toUpperCase()})`);
+    await DataStore.persist();
+    auditRows();
+  }
+
+  async function exportRiderReport(format){
+    const riderId = document.getElementById('riderReportSelect').value;
+    const name = riderMap()[riderId] || 'Unknown';
+    const entries = riderReportEntries().sort((a,b) => {
+      if(a.date !== b.date) return a.date.localeCompare(b.date); // oldest date first for exports
+      return entryTimestamp(a) - entryTimestamp(b); // within the same date, earliest created first
+    });
+    if(!entries.length) return alert('No entries in this range for this rider.');
+    const { sorted, balance } = riderRunningTotals(DataStore.state.entries);
+    const slug = name.trim().toLowerCase().replace(/\s+/g,'-') || 'rider';
+    const from = document.getElementById('rrFrom').value;
+    const to = document.getElementById('rrTo').value;
+    const rangeLabel = (from || to) ? `${from || 'start'}_to_${to || 'now'}` : 'lifetime';
+    const rangeSubtitle = (from || to) ? `${from || '…'} – ${to || '…'}` : 'Lifetime';
+
+    // "Pending" is always the rider's current lifetime outstanding balance —
+    // independent of whatever Week/Month/date range this export covers for
+    // the KM/Total/Paid/entries figures.
+    const riderList = sorted[riderId] || [];
+    const pendingDisplay = riderList.length ? balance[riderList[riderList.length - 1].id] : 0;
+
+    if(format === 'csv'){
+      const csv = toCsv([
+        ['Date','KM','Total','Paid','Pending','Balance','Status','Note'],
+        ...entries.map(e => [e.date, e.km, e.total, e.paid, e.pending, balance[e.id] ?? 0, entryStatus(e), e.note||''])
+      ]);
+      downloadFile(`rider-report-${slug}-${rangeLabel}.csv`, csv, 'text/csv;charset=utf-8;');
+    } else {
+      const sum = key => entries.reduce((s,e) => s + Number(e[key]||0), 0);
+      const statChips = [
+        { label:'KM', value: money(sum('km')) },
+        { label:'Total', value: money(sum('total')) },
+        { label:'Paid', value: money(sum('paid')) },
+        { label:'Pending', value: money(pendingDisplay) }
+      ];
+      const ok = await exportVisual(`Rider Report — ${name}`, `${rangeSubtitle} · Generated ${formatDateLong(new Date())}`,
+        ['Date','KM','Total','Paid','Pending','Balance','Status','Note'],
+        entries.map(e => [e.date, money(e.km), money(e.total), money(e.paid), money(e.pending), money(balance[e.id] ?? 0), entryStatus(e), e.note||'']),
+        `rider-report-${slug}-${rangeLabel}`, format, statChips);
+      if(!ok) return;
+    }
+    DataStore.log(`Generated rider report — ${name} (${format.toUpperCase()})`);
+    await DataStore.persist();
+    auditRows();
+  }
+
+  return { render, populateRiderSelect, renderRiderReport, setRiderReportRange, openRiderReport, exportDaily, exportWeekly, exportMonthly, exportRiderReport };
+})();
+
+/* ============================================================
+   AUDIT LOG
+   ============================================================ */
+function auditRows(){
+  renderRows('auditRows', DataStore.state.auditLogs, 2,
+    l => `<tr><td class="num">${esc(new Date(l.time).toLocaleString())}</td><td>${esc(l.action)}</td></tr>`,
+    'No activity yet.');
+}
+
+/* ============================================================
+   BACKUP / RESTORE
+   ============================================================ */
+const Backup = (() => {
+  async function exportJSON(){
+    // Never write the owner PIN into a file that gets shared or stored
+    // on a shared machine.
+    const { pin, ...safeState } = DataStore.state;
+    downloadFile(`ledger-backup-${todayISO()}.json`, JSON.stringify(safeState, null, 2), 'application/json');
+    DataStore.log('Exported JSON backup');
+    await DataStore.persist();
+    auditRows();
+  }
+
+  async function exportCSV(){
+    const rMap = riderMap();
+    const rows = [['Date','Rider','KM','Rate','Total','Paid','Pending','Status','Note']];
+    [...DataStore.state.entries].sort((a,b) => {
+      if(a.date !== b.date) return a.date.localeCompare(b.date);
+      return entryTimestamp(a) - entryTimestamp(b);
+    }).forEach(e => {
+      rows.push([e.date, rMap[e.riderId]||'Unknown', e.km, e.rate, e.total, e.paid, e.pending, entryStatus(e), e.note||'']);
+    });
+    downloadFile(`ledger-report-${todayISO()}.csv`, toCsv(rows), 'text/csv;charset=utf-8;');
+    DataStore.log('Exported CSV report');
+    await DataStore.persist();
+    auditRows();
+  }
+
+  function importFile(event){
+    const file = event.target.files[0];
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async e => {
+      try{
+        const imported = JSON.parse(e.target.result);
+        if(!Array.isArray(imported.riders) || !Array.isArray(imported.entries)){
+          alert('Invalid backup file.'); return;
+        }
+        if(!confirm('Restoring replaces all current riders and entries. Continue?')) return;
+        DataStore.state.riders = imported.riders;
+        DataStore.state.entries = imported.entries;
+        DataStore.state.auditLogs = Array.isArray(imported.auditLogs) ? imported.auditLogs : [];
+        DataStore.log('Imported backup file');
+        await DataStore.persist();
+        Entries.resetForm(); // an in-progress edit may point at an entry that no longer exists
+        App.renderAll();
+        alert('Backup imported successfully.');
+      }catch(err){ alert('Could not read that file.'); }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  }
+
+  return { exportJSON, exportCSV, import: importFile };
+})();
+
+/* ============================================================
+   APP BOOT
+   ============================================================ */
+const App = {
+  renderAll(){
+    Riders.populateSelects();
+    Riders.render();
+    Entries.render();
+    Dashboard.render();
+    Reports.render();
+    auditRows();
+    Entries.preview();
+    PinSystem.updateSessionUI();
+    AppNav.renderRecent();
+  },
+  renderAuditLog: auditRows
+};
+
+document.getElementById('entryDate').value = todayISO();
+document.getElementById('reportMonth').value = todayISO().slice(0,7);
+document.getElementById('reportDay').value = todayISO();
+document.getElementById('fMonth').value = '';
+
+/* DataStore.load() is now triggered automatically by Auth.onAuthStateChanged
+   once the user is signed in — see the Auth module above. */
+
+
+/* ===================== MOBILE APP NAVIGATION ===================== */
+const AppNav = (() => {
+  function buttons(){ return [...document.querySelectorAll('.bottom-nav button[data-screen]')]; }
+  function go(screen){
+    document.querySelectorAll('.app-screen').forEach(s => s.classList.toggle('active', s.dataset.screen === screen));
+    buttons().forEach(b => b.classList.toggle('active', b.dataset.screen === screen));
+    window.scrollTo({top:0,behavior:'smooth'});
+  }
+  function home(){ go('home'); }
+  function entries(){ go('entries'); }
+  function reports(){ go('reports'); }
+  function more(){ go('more'); }
+  function openAdd(){
+    go('entries');
+    setTimeout(()=>document.getElementById('entryKm')?.focus(),180);
+  }
+  function renderRecent(){
+    const box=document.getElementById('recentEntries');
+    const pendingBox=document.getElementById('riderPendingList');
+    if((!box && !pendingBox) || typeof DataStore==='undefined') return;
+    const map=riderMap();
+    const entries=[...DataStore.state.entries].sort((a,b)=>a.date!==b.date?b.date.localeCompare(a.date):entryTimestamp(b)-entryTimestamp(a));
+    const rows=entries.slice(0,5);
+
+    // Current cumulative pending for every rider.
+    const riderPending={};
+    (DataStore.state.riders||[]).forEach(r=>riderPending[r.id]=0);
+    entries.forEach(e=>{ riderPending[e.riderId]=(riderPending[e.riderId]||0)+Number(e.pending||0); });
+
+    if(box){
+      if(!rows.length){
+        box.innerHTML='<div class="empty-state"><div class="empty-icon">＋</div><strong>No entries yet</strong><span>Add your first ride entry with the + button.</span></div>';
+      } else {
+        box.innerHTML=rows.map(e=>{
+          const st=entryStatus(e);
+          const rp=Number(riderPending[e.riderId]||0);
+          return `<div class="recent-item"><div><div class="recent-title">${esc(map[e.riderId]||'Unknown Rider')}</div><div class="recent-meta">${e.date} · ${money(e.km)} KM · ${st.toUpperCase()}</div></div><div class="recent-right"><strong>৳${money(e.total)}</strong><span class="mini-status ${rp>0?'unpaid':'paid'}">Pending ৳${money(rp)}</span></div></div>`;
+        }).join('');
+      }
+    }
+
+    if(pendingBox){
+      const riders=[...(DataStore.state.riders||[])].sort((a,b)=>Number(riderPending[b.id]||0)-Number(riderPending[a.id]||0) || String(a.name).localeCompare(String(b.name)));
+      pendingBox.innerHTML=riders.length ? riders.map(r=>{
+        const amount=Number(riderPending[r.id]||0);
+        const count=entries.filter(e=>e.riderId===r.id).length;
+        return `<div class="rider-pending-item"><div><div class="rider-pending-name">${esc(r.name)}</div><div class="rider-pending-sub">${count} ${count===1?'entry':'entries'}</div></div><div class="rider-pending-amount ${amount>0?'pending':'clear'}">৳${money(amount)}</div></div>`;
+      }).join('') : '<div class="empty-state"><strong>No riders</strong><span>Add riders from More → Riders.</span></div>';
+    }
+  }
+  return {go,home,entries,reports,more,openAdd,renderRecent};
+})();
+</script></body></html>
